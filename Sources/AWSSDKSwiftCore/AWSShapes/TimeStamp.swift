@@ -25,17 +25,25 @@ public struct TimeStamp {
     }
     
     static func string(from date: Date) -> String {
-        return dateFormatter.string(from: date)
+        return isoDateFormatter.string(from: date)
     }
 
     static func date(from string: String) -> Date? {
-        return dateFormatter.date(from: string)
+        return isoDateFormatter.date(from: string) ?? httpHeaderDateFormatter.date(from: string)
     }
     
-    private static var dateFormatter : DateFormatter {
+    private static var isoDateFormatter: DateFormatter {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return dateFormatter
+    }
+    
+    private static var httpHeaderDateFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.dateFormat = "EEE',' dd' 'MMM' 'yyyy HH':'mm':'ss zzz"
         dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
         return dateFormatter
     }
